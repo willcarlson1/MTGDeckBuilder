@@ -1,0 +1,70 @@
+<!doctype html>
+<html>
+<head>
+  <title>SOC SLA Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <h1>SLA Dashboard</h1>
+  <table border="1" cellpadding="5" cellspacing="0">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Category</th>
+        <th>Response (hrs)</th>
+        <th>SLA (hrs)</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for incident in incidents %}
+      <tr>
+        <td>{{ incident.id }}</td>
+        <td>{{ incident.category }}</td>
+        <td>{{ incident.response_hours }}</td>
+        <td>{{ incident.sla_hours }}</td>
+        <td>{{ incident.status }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+
+  <canvas id="slaChart" width="400" height="200"></canvas>
+  <script>
+    const ids = {{ incidents | map(attribute='id') | list | tojson }};
+    const responses = {{ incidents | map(attribute='response_hours') | list | tojson }};
+    const slas = {{ incidents | map(attribute='sla_hours') | list | tojson }};
+
+    const ctx = document.getElementById('slaChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ids,
+        datasets: [
+          {
+            label: 'Response (hrs)',
+            data: responses,
+            backgroundColor: 'rgba(75, 192, 192, 0.5)'
+          },
+          {
+            label: 'SLA (hrs)',
+            data: slas,
+            backgroundColor: 'rgba(255, 99, 132, 0.5)'
+          }
+        ]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Hours'
+            }
+          }
+        }
+      }
+    });
+  </script>
+</body>
+</html>
