@@ -27,6 +27,16 @@ def move_messages_by_subject(subjects):
         if subject_clean in subjects:
             mail.Move(dest)
 
+@app.route('/sla')
+def sla_dashboard():
+    """Simple SOC SLA dashboard with sample data."""
+    incidents = [
+        {'id': 1, 'category': 'Phishing', 'response_hours': 2, 'sla_hours': 4, 'status': 'Met'},
+        {'id': 2, 'category': 'Malware', 'response_hours': 3, 'sla_hours': 2, 'status': 'Breached'},
+        {'id': 3, 'category': 'Unauthorized Access', 'response_hours': 1, 'sla_hours': 3, 'status': 'Met'},
+    ]
+    return render_template('sla.html', incidents=incidents)
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
